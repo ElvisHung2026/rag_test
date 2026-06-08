@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>公司資安守則員工手冊</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--navy:#0f1923;--navy2:#162232;--navy3:#1e3048;--accent:#3d8ef8;--accent2:#5ba3ff;--gold:#e8b84b;--text:#e8edf5;--text2:#8fa4c0;--border:rgba(255,255,255,0.08);--success:#3ecf8e;--danger:#e24b4a;}
+html,body{height:100%;background:#0a1018;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);}
+#app{display:flex;width:960px;height:720px;background:var(--navy);border-radius:12px;overflow:hidden;border:0.5px solid rgba(255,255,255,0.12);position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.6);}
+#sidebar{width:220px;min-width:220px;background:var(--navy2);border-right:0.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+#sidebar-header{padding:16px 14px 12px;border-bottom:0.5px solid var(--border);}
+.logo-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.logo-icon{width:28px;height:28px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-icon i{font-size:15px;color:#fff;}
+.co-name{font-size:12px;font-weight:500;}
+.doc-title{font-size:10px;color:var(--text2);margin-top:1px;}
+#search-box{position:relative;}
+.search-ico{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text2);pointer-events:none;}
+#search-input{width:100%;background:var(--navy3);border:0.5px solid var(--border);border-radius:6px;padding:6px 8px 6px 26px;font-size:12px;color:var(--text);outline:none;}
+#search-input::placeholder{color:var(--text2);}
+#search-input:focus{border-color:var(--accent);}
+#search-results{position:absolute;z-index:10;width:100%;background:var(--navy3);border:0.5px solid var(--border);border-radius:8px;margin-top:4px;overflow:hidden;display:none;}
+.sr-item{padding:8px 12px;font-size:12px;color:var(--text2);cursor:pointer;border-bottom:0.5px solid var(--border);}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:rgba(61,142,248,0.1);color:var(--text);}
+.sr-sec{font-size:10px;color:var(--accent2);margin-bottom:1px;}
+#nav-list{flex:1;overflow-y:auto;padding:8px 0;}
+#nav-list::-webkit-scrollbar{width:3px;}
+#nav-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.nav-divider{padding:8px 14px 4px;font-size:10px;color:var(--text2);letter-spacing:0.6px;text-transform:uppercase;}
+.nav-item{padding:8px 14px;font-size:12px;color:var(--text2);cursor:pointer;border-left:2px solid transparent;transition:all 0.15s;display:flex;align-items:flex-start;gap:8px;}
+.nav-item:hover{color:var(--text);background:rgba(61,142,248,0.06);}
+.nav-item.active{color:var(--accent2);border-left-color:var(--accent);background:rgba(61,142,248,0.1);}
+.nav-item i{font-size:14px;flex-shrink:0;margin-top:1px;}
+.nav-label{flex:1;line-height:1.4;}
+.nav-read{width:6px;height:6px;border-radius:50%;background:var(--success);flex-shrink:0;margin-top:4px;display:none;}
+.nav-item.read-done .nav-read{display:block;}
+#progress-bar-wrap{padding:10px 14px;border-top:0.5px solid var(--border);}
+.prog-label{font-size:10px;color:var(--text2);margin-bottom:5px;display:flex;justify-content:space-between;}
+.prog-track{height:3px;background:var(--navy3);border-radius:2px;}
+.prog-fill{height:3px;background:linear-gradient(90deg,var(--accent),var(--success));border-radius:2px;transition:width 0.4s;}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#topbar{padding:12px 20px;background:var(--navy2);border-bottom:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;min-height:52px;flex-shrink:0;}
+.chapter-title{font-size:14px;font-weight:500;}
+.chapter-num{font-size:11px;color:var(--text2);margin-top:1px;}
+#sign-btn{padding:6px 14px;font-size:12px;font-weight:500;background:transparent;border:0.5px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:all 0.15s;}
+#sign-btn:hover{background:rgba(61,142,248,0.15);}
+#content-area{flex:1;overflow-y:auto;padding:24px 28px;}
+#content-area::-webkit-scrollbar{width:4px;}
+#content-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+#reading-progress{position:sticky;top:-24px;height:2px;background:linear-gradient(90deg,var(--accent),var(--success));margin:-24px -28px 20px;transition:width 0.2s;}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:0.5px solid var(--border);}
+.section-icon{width:36px;height:36px;border-radius:8px;background:rgba(61,142,248,0.15);border:0.5px solid rgba(61,142,248,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-icon i{font-size:18px;color:var(--accent2);}
+.section-title{font-size:18px;font-weight:500;}
+.rule-item{padding:10px 14px;border-radius:8px;background:var(--navy2);border:0.5px solid var(--border);margin-bottom:8px;}
+.rule-title{font-size:13px;font-weight:500;margin-bottom:3px;display:flex;align-items:center;gap:7px;}
+.rule-title i{font-size:14px;color:var(--accent2);flex-shrink:0;}
+.rule-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+.alert-box{border-radius:8px;padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;}
+.alert-box.danger{background:rgba(226,75,74,0.1);border:0.5px solid rgba(226,75,74,0.3);}
+.alert-box.warning{background:rgba(232,184,75,0.1);border:0.5px solid rgba(232,184,75,0.3);}
+.alert-box.info{background:rgba(61,142,248,0.08);border:0.5px solid rgba(61,142,248,0.25);}
+.alert-box i{font-size:16px;flex-shrink:0;margin-top:1px;}
+.alert-box.danger i{color:var(--danger);}
+.alert-box.warning i{color:var(--gold);}
+.alert-box.info i{color:var(--accent);}
+.alert-box p{font-size:13px;line-height:1.6;}
+.sub-section{margin-top:18px;}
+.sub-section h3{font-size:10px;font-weight:500;color:var(--text2);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;}
+.badge{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:500;margin-left:6px;}
+.badge.critical{background:rgba(226,75,74,0.2);color:#f09595;}
+.badge.required{background:rgba(61,142,248,0.2);color:var(--accent2);}
+#sign-modal-bg{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.55);z-index:20;align-items:center;justify-content:center;}
+#sign-modal-bg.open{display:flex;}
+#sign-modal{background:var(--navy2);border:0.5px solid var(--border);border-radius:12px;padding:24px;width:320px;}
+#sign-modal h2{font-size:15px;font-weight:500;margin-bottom:6px;}
+#sign-modal p{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6;}
+#sign-modal input{width:100%;background:var(--navy3);border:0.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text);outline:none;margin-bottom:12px;}
+#sign-modal input:focus{border-color:var(--accent);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;}
+.btn-cancel{padding:7px 14px;font-size:12px;background:transparent;border:0.5px solid var(--border);color:var(--text2);border-radius:6px;cursor:pointer;}
+.btn-confirm{padding:7px 14px;font-size:12px;background:var(--success);border:none;color:#0f1923;border-radius:6px;cursor:pointer;font-weight:500;}
+#toast{position:absolute;bottom:20px;right:20px;background:var(--navy3);border:0.5px solid var(--success);color:var(--success);border-radius:8px;padding:10px 14px;font-size:12px;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:30;}
+#toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <div class="logo-row">
+        <div class="logo-icon"><i class="ti ti-shield-lock"></i></div>
+        <div><div class="co-name">公司員工須知</div><div class="doc-title">資訊安全守則</div></div>
+      </div>
+      <div id="search-box">
+        <i class="ti ti-search search-ico"></i>
+        <input type="text" id="search-input" placeholder="搜尋內容..." autocomplete="off">
+        <div id="search-results"></div>
+      </div>
+    </div>
+    <div id="nav-list"><div class="nav-divider">章節</div></div>
+    <div id="progress-bar-wrap">
+      <div class="prog-label"><span>完成進度</span><span id="prog-pct">0%</span></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div id="main">
+    <div id="topbar">
+      <div><div class="chapter-title" id="topbar-title">—</div><div class="chapter-num" id="topbar-num"></div></div>
+      <button id="sign-btn" onclick="openModal()"><i class="ti ti-writing"></i> 確認已讀</button>
+    </div>
+    <div id="content-area" onscroll="onScroll()">
+      <div id="reading-progress" style="width:0%"></div>
+      <div id="content-body"></div>
+    </div>
+  </div>
+  <div id="sign-modal-bg">
+    <div id="sign-modal">
+      <h2><i class="ti ti-writing" style="margin-right:6px;color:var(--accent2)"></i>確認已讀章節</h2>
+      <p id="modal-ch" style="color:var(--accent2);font-size:13px;margin-bottom:6px;"></p>
+      <p>請輸入您的姓名，確認您已閱讀並了解本章節內容。</p>
+      <input type="text" id="sign-name" placeholder="輸入您的姓名">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">取消</button>
+        <button class="btn-confirm" onclick="confirmSign()">確認簽署</button>
+      </div>
+    </div>
+  </div>
+  <div id="toast"><i class="ti ti-circle-check"></i><span id="toast-msg"></span></div>
+</div>
+<script>
+const chapters=[
+  {id:'office',icon:'ti-building',title:'辦公環境資安指引',
+   kw:['辦公','隱私','機密','列印','影印','私人電腦','儲存媒體','抽屜','廢紙'],
+   html:`<div class="section-header"><div class="section-icon"><i class="ti ti-building"></i></div><div><div class="section-title">辦公環境資安指引</div></div></div>
+<div class="alert-box warning"><i class="ti ti-alert-circle"></i><p>個人隱私資料及機密資訊（帳號、密碼等）不應貼在明顯處（桌面、螢幕旁），以避免被他人輕易盜用。</p></div>
+<div class="sub-section"><h3>文件與列印管理</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-printer"></i>列印後立即取回</div><div class="rule-desc">列印或影印後，應立即將原始文件及相關資料取回，避免機密資料被不當取用。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-file-x"></i>廢紙再利用注意事項</div><div class="rule-desc">廢紙再列印之紙張背面，應確認正反兩面皆無機密或敏感性資料。</div></div></div>
+<div class="sub-section"><h3>實體環境規範</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-device-laptop-off"></i>私人設備禁止入內 <span class="badge critical">嚴禁</span></div><div class="rule-desc">非經授權，嚴禁攜帶私人電腦與儲存媒體進入公司，或使用任何非公司資產設備連接至公司內部網路。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-layout-list"></i>桌面整潔與文件收納</div><div class="rule-desc">辦公環境宜維持整齊、乾淨；文件收入抽屜，避免機敏資料、文件外露。</div></div></div>`},
+  {id:'computer',icon:'ti-device-desktop',title:'電腦安全使用守則',
+   kw:['電腦','軟體','防毒','病毒','密碼','鎖定','螢幕','遠端','郵件','下載','帳號','回收桶'],
+   html:`<div class="section-header"><div class="section-icon"><i class="ti ti-device-desktop"></i></div><div><div class="section-title">電腦安全使用守則</div></div></div>
+<div class="alert-box danger"><i class="ti ti-alert-triangle"></i><p>嚴禁下載及安裝與業務無關或未經授權之軟體。違者將依公司規定處置。</p></div>
+<div class="sub-section"><h3>帳號與密碼管理</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-lock"></i>密碼複雜度要求 <span class="badge critical">必須遵守</span></div><div class="rule-desc">密碼至少 8 碼以上，需包含大小寫英文、數字、符號三項中的三項，且不得與前三代密碼重複。每 90 天自動要求更新。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-user-x"></i>禁止共用帳號 <span class="badge critical">嚴禁</span></div><div class="rule-desc">系統帳號為唯一識別，禁止借用他人帳號或共用登入帳號、密碼。首次使用系統應立即更改密碼並妥善保管。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-key-off"></i>不儲存密碼</div><div class="rule-desc">登入任何系統及網頁，如有詢問是否記住密碼及帳號，建議不要記住，以避免帳號被濫用。</div></div></div>
+<div class="sub-section"><h3>電腦使用規範</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-lock-square"></i>離座螢幕鎖定</div><div class="rule-desc">離開電腦前請按 Win 鍵 + L 進行鎖定，並設定閒置 15 分鐘後啟動螢幕保護功能，以避免未經同意的存取。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-virus"></i>惡意程式處置 <span class="badge critical">立即通報</span></div><div class="rule-desc">系統或電腦設備如遭惡意軟體入侵感染，應立即將網路離線隔離，並通知資訊管理人員處理。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-trash"></i>資源回收桶清空</div><div class="rule-desc">重要及機敏資料應避免存放於電腦桌面，刪除時請同步清除資源回收桶，電腦使用結束後建議順手清除。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-remote-control"></i>遠端連線限制</div><div class="rule-desc">工程師要求遠端連線查修時，才啟動遠端程式，障礙排除後立即關閉，以避免電腦隨意被遠端操作。</div></div></div>
+<div class="sub-section"><h3>電子郵件與網路使用</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-mail-off"></i>禁止使用個人信箱 <span class="badge critical">嚴禁</span></div><div class="rule-desc">未經授權，禁止使用公司外部電子郵件（Gmail、Hotmail 等）、即時通訊（Line、QQ 等）、社群網站（Facebook 等）或免費雲端空間（Dropbox 等）處理公務。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-fish-hook"></i>可疑郵件處理</div><div class="rule-desc">來路不明之電子郵件不宜隨意開啟；個人 Outlook 宜關閉預覽及自動下載功能，以避免遭受惡意程式攻擊。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-mail-forward"></i>對外資料交換規範</div><div class="rule-desc">與廠商交換資料或電子郵件往來，應使用公司提供之正式專用信箱，勿使用私人信箱，以避免機敏資料外流。</div></div>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-ban"></i>禁止郵件騷擾</div><div class="rule-desc">禁止發送電子郵件騷擾他人，或以任何手段蓄意干擾及妨害系統之正常運作。</div></div></div>`},
+  {id:'public',icon:'ti-device-usb',title:'公共設備使用規範',
+   kw:['公共','可攜式','筆記型電腦','隨身碟','外接','光碟','共用電腦','登出'],
+   html:`<div class="section-header"><div class="section-icon"><i class="ti ti-device-usb"></i></div><div><div class="section-title">公共設備使用規範</div></div></div>
+<div class="alert-box info"><i class="ti ti-info-circle"></i><p>使用公共或共用設備完畢後，務必清除個人資料並登出帳號，防止未經同意的資料存取。</p></div>
+<div class="sub-section"><h3>可攜式儲存媒體</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-usb"></i>使用後清除並歸還</div><div class="rule-desc">公共使用之可攜式儲存媒體（筆記型電腦、隨身碟、外接式硬碟、光碟等），使用完畢時請將自行增加之檔案刪除，並歸還相關管理者，以防止未經同意之資料存取。</div></div></div>
+<div class="sub-section"><h3>辦公室公用電腦</h3>
+<div class="rule-item"><div class="rule-title"><i class="ti ti-logout"></i>使用後三步驟 <span class="badge required">必要步驟</span></div><div class="rule-desc">辦公室公用電腦或多人使用之共用電腦，使用完成後需：① 刪除自行使用之檔案 ② 清空資源回收桶 ③ 登出帳號。</div></div></div>`}
+];
+
+let cur=0,readSet=new Set(),signSet=new Set();
+
+function buildNav(){
+  const nav=document.getElementById('nav-list');
+  nav.innerHTML='<div class="nav-divider">章節</div>';
+  chapters.forEach((ch,i)=>{
+    const d=document.createElement('div');
+    d.className='nav-item'+(i===cur?' active':'')+(readSet.has(i)?' read-done':'');
+    d.innerHTML=`<i class="ti ${ch.icon}"></i><span class="nav-label">${ch.title}</span><span class="nav-read"></span>`;
+    d.onclick=()=>goTo(i);
+    nav.appendChild(d);
+  });
+}
+
+function goTo(i){
+  cur=i;const ch=chapters[i];
+  document.getElementById('topbar-title').textContent=ch.title;
+  document.getElementById('topbar-num').textContent=`第 ${i+1} 章，共 ${chapters.length} 章`;
+  document.getElementById('content-body').innerHTML=ch.html;
+  document.getElementById('content-area').scrollTop=0;
+  document.getElementById('reading-progress').style.width='0%';
+  const btn=document.getElementById('sign-btn');
+  if(signSet.has(i)){
+    btn.innerHTML='<i class="ti ti-circle-check"></i> 已完成簽署';
+    btn.style.cssText='padding:6px 14px;font-size:12px;font-weight:500;background:rgba(62,207,142,0.1);border:0.5px solid var(--success);color:var(--success);border-radius:6px;cursor:default;display:flex;align-items:center;gap:6px;';
+    btn.onclick=null;
+  }else{
+    btn.innerHTML='<i class="ti ti-writing"></i> 確認已讀';
+    btn.style.cssText='padding:6px 14px;font-size:12px;font-weight:500;background:transparent;border:0.5px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:6px;';
+    btn.onclick=openModal;
+  }
+  buildNav();updateProg();
+}
+
+function onScroll(){
+  const el=document.getElementById('content-area');
+  const p=Math.min(100,Math.round(el.scrollTop/Math.max(1,el.scrollHeight-el.clientHeight)*100));
+  document.getElementById('reading-progress').style.width=p+'%';
+  if(p>80&&!readSet.has(cur)){readSet.add(cur);buildNav();updateProg();}
+}
+
+function updateProg(){
+  const p=Math.round(signSet.size/chapters.length*100);
+  document.getElementById('prog-pct').textContent=p+'%';
+  document.getElementById('prog-fill').style.width=p+'%';
+}
+
+function openModal(){
+  document.getElementById('modal-ch').textContent='《'+chapters[cur].title+'》';
+  document.getElementById('sign-name').value='';
+  document.getElementById('sign-modal-bg').classList.add('open');
+}
+function closeModal(){document.getElementById('sign-modal-bg').classList.remove('open');}
+function confirmSign(){
+  const name=document.getElementById('sign-name').value.trim();
+  if(!name){document.getElementById('sign-name').style.borderColor='#e24b4a';return;}
+  closeModal();signSet.add(cur);readSet.add(cur);updateProg();
+  const btn=document.getElementById('sign-btn');
+  btn.innerHTML='<i class="ti ti-circle-check"></i> 已完成簽署';
+  btn.style.cssText='padding:6px 14px;font-size:12px;font-weight:500;background:rgba(62,207,142,0.1);border:0.5px solid var(--success);color:var(--success);border-radius:6px;cursor:default;display:flex;align-items:center;gap:6px;';
+  btn.onclick=null;buildNav();
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=name+' 已完成《'+chapters[cur].title+'》簽署';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+const sidx=[];
+chapters.forEach((ch,ci)=>ch.kw.forEach(kw=>sidx.push({kw,ci,title:ch.title})));
+document.getElementById('search-input').addEventListener('input',function(){
+  const q=this.value.trim(),r=document.getElementById('search-results');
+  if(!q){r.style.display='none';return;}
+  const hits=[],seen=new Set();
+  sidx.forEach(it=>{if(it.kw.includes(q)&&!seen.has(it.ci)){seen.add(it.ci);hits.push(it);}});
+  if(!hits.length){r.style.display='none';return;}
+  r.innerHTML=hits.map(h=>`<div class="sr-item" onclick="goTo(${h.ci});document.getElementById('search-input').value='';document.getElementById('search-results').style.display='none';"><div class="sr-sec">第 ${h.ci+1} 章</div>${h.title}</div>`).join('');
+  r.style.display='block';
+});
+document.getElementById('search-input').addEventListener('blur',()=>setTimeout(()=>{document.getElementById('search-results').style.display='none';},200));
+document.getElementById('sign-modal-bg').onclick=function(e){if(e.target===this)closeModal();};
+goTo(0);
+</script>
+</body>
+</html>
