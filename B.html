@@ -120,9 +120,9 @@ function updateClock() {
 setInterval(updateClock, 1000);
 updateClock();
 
-let API_KEY = localStorage.getItem('fdorg_api_key') || '';
+let API_KEY = localStorage.getItem('fdorg_api_key') || 'a57f5ae0a3a144028b0681e620ac1999';
+document.getElementById('keyForm').style.display = 'none';
 if (API_KEY) {
-  document.getElementById('keyForm').style.display = 'none';
   loadMatches();
 }
 
