@@ -5,402 +5,240 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 FIFA 世界盃 即時戰績</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-    background: #0d1117;
-    color: #e6edf3;
-    min-height: 100vh;
-  }
-
-  /* ── Header ── */
-  header {
-    background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
-    border-bottom: 2px solid #c8a94f;
-    padding: 18px 20px 12px;
-    text-align: center;
-  }
-  header .wc-label {
-    font-size: 0.75rem;
-    letter-spacing: 3px;
-    color: #c8a94f;
-    text-transform: uppercase;
-  }
-  header h1 {
-    font-size: 1.6rem;
-    font-weight: 900;
-    margin: 4px 0;
-    background: linear-gradient(90deg, #c8a94f, #fff, #c8a94f);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  header .sub {
-    font-size: 0.8rem;
-    color: #8b949e;
-  }
-  #clock {
-    font-size: 0.78rem;
-    color: #c8a94f;
-    margin-top: 6px;
-  }
-
-  /* ── Tabs ── */
-  .tabs {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    background: #161b22;
-    border-bottom: 1px solid #30363d;
-  }
-  .tab {
-    padding: 10px 22px;
-    cursor: pointer;
-    font-size: 0.88rem;
-    color: #8b949e;
-    border-bottom: 3px solid transparent;
-    transition: all 0.2s;
-  }
-  .tab.active { color: #c8a94f; border-bottom-color: #c8a94f; }
-  .tab:hover  { color: #e6edf3; }
-
-  /* ── Panels ── */
-  .panel { display: none; padding: 16px; max-width: 900px; margin: 0 auto; }
-  .panel.active { display: block; }
-
-  /* ── Match Card ── */
-  .match-date-label {
-    font-size: 0.72rem;
-    color: #8b949e;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin: 18px 0 8px;
-  }
-  .match-card {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    padding: 14px 18px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .match-card.live { border-color: #3fb950; }
-  .match-card.live .status { color: #3fb950; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-  .status {
-    font-size: 0.72rem;
-    font-weight: bold;
-    min-width: 52px;
-    text-align: center;
-    color: #8b949e;
-  }
-  .status.ft   { color: #8b949e; }
-  .status.upcoming { color: #58a6ff; }
-
-  .teams {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .team {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-  }
-  .team.right { flex-direction: row-reverse; text-align: right; }
-  .team .flag { font-size: 1.5rem; }
-  .team .name { font-size: 0.9rem; font-weight: 600; }
-
-  .score-box {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    min-width: 80px;
-    justify-content: center;
-  }
-  .score {
-    font-size: 1.6rem;
-    font-weight: 900;
-    min-width: 28px;
-    text-align: center;
-    line-height: 1;
-  }
-  .score-sep { color: #444; font-size: 1.2rem; }
-
-  .match-meta {
-    font-size: 0.7rem;
-    color: #6e7681;
-    text-align: right;
-    min-width: 80px;
-  }
-
-  /* ── Group Table ── */
-  .group-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 14px;
-    margin-top: 8px;
-  }
-  .group-block {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .group-header {
-    background: #1f2937;
-    padding: 8px 14px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: #c8a94f;
-    letter-spacing: 1px;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-  th {
-    padding: 6px 8px;
-    text-align: center;
-    color: #6e7681;
-    font-weight: 500;
-    background: #161b22;
-  }
-  th:first-child { text-align: left; padding-left: 14px; }
-  td {
-    padding: 7px 8px;
-    text-align: center;
-    border-top: 1px solid #21262d;
-  }
-  td:first-child { text-align: left; padding-left: 14px; }
-  tr.qualify td:first-child { border-left: 3px solid #3fb950; }
-  tr.playoff td:first-child { border-left: 3px solid #d29922; }
-  .tf { font-size: 1.1rem; margin-right: 5px; }
-
-  /* ── Bracket ── */
-  .bracket-note {
-    text-align: center;
-    padding: 40px 20px;
-    color: #6e7681;
-    font-size: 0.9rem;
-  }
-  .bracket-note .big { font-size: 2.5rem; margin-bottom: 10px; }
-
-  .footer {
-    text-align: center;
-    font-size: 0.72rem;
-    color: #3d444d;
-    padding: 20px;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background: #0d1117;
+  color: #e6edf3;
+  min-height: 100vh;
+}
+header {
+  background: linear-gradient(135deg, #1a1f35 0%, #0d1117 100%);
+  border-bottom: 2px solid #c8a94f;
+  padding: 18px 20px 12px;
+  text-align: center;
+}
+header .wc-label { font-size: 0.75rem; letter-spacing: 3px; color: #c8a94f; text-transform: uppercase; }
+header h1 {
+  font-size: 1.6rem; font-weight: 900; margin: 4px 0;
+  background: linear-gradient(90deg, #c8a94f, #fff, #c8a94f);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+header .sub { font-size: 0.8rem; color: #8b949e; }
+#clock { font-size: 0.78rem; color: #c8a94f; margin-top: 6px; }
+#api-note { font-size: 0.75rem; color: #58a6ff; margin-top: 4px; }
+.container { max-width: 900px; margin: 0 auto; padding: 16px; }
+.section-title {
+  font-size: 0.8rem; color: #8b949e; letter-spacing: 2px; text-transform: uppercase;
+  margin: 20px 0 10px; border-bottom: 1px solid #30363d; padding-bottom: 6px;
+}
+.match-card {
+  background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+  padding: 14px 18px; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 12px;
+}
+.match-card.live { border-color: #3fb950; }
+.status { font-size: 0.72rem; font-weight: bold; min-width: 60px; text-align: center; color: #8b949e; }
+.status.live-status { color: #3fb950; animation: pulse 1.5s infinite; }
+.status.upcoming { color: #58a6ff; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.teams { flex: 1; display: flex; align-items: center; gap: 8px; }
+.team { display: flex; align-items: center; gap: 6px; flex: 1; }
+.team.right { flex-direction: row-reverse; text-align: right; }
+.team .name { font-size: 0.9rem; font-weight: 600; }
+.score-box {
+  display: flex; align-items: center; gap: 6px;
+  background: #0d1117; border-radius: 6px; padding: 4px 10px;
+  font-size: 1.2rem; font-weight: 900; min-width: 70px; justify-content: center;
+}
+.score-sep { color: #8b949e; font-size: 0.9rem; }
+.venue { font-size: 0.7rem; color: #8b949e; min-width: 100px; text-align: right; }
+#loading { text-align: center; padding: 40px; color: #8b949e; font-size: 0.9rem; display: none; }
+#error-msg {
+  background: #2d1b1b; border: 1px solid #f85149; border-radius: 8px;
+  padding: 16px; color: #f85149; text-align: center; margin: 20px 0; display: none;
+}
+.api-key-form {
+  background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+  padding: 20px; margin: 20px 0; text-align: center;
+}
+.api-key-form h3 { color: #c8a94f; margin-bottom: 12px; font-size: 1rem; }
+.api-key-form p { font-size: 0.82rem; color: #8b949e; margin-bottom: 14px; line-height: 1.6; }
+.api-key-form input {
+  background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+  color: #e6edf3; padding: 8px 14px; font-size: 0.85rem;
+  width: 300px; max-width: 100%; margin-right: 8px;
+}
+.api-key-form button {
+  background: #c8a94f; border: none; border-radius: 6px;
+  color: #0d1117; padding: 8px 18px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
+}
+.api-key-form button:hover { background: #e0c070; }
+.refresh-btn {
+  display: block; margin: 0 auto 16px;
+  background: #21262d; border: 1px solid #30363d; border-radius: 6px;
+  color: #c8a94f; padding: 7px 20px; font-size: 0.82rem; cursor: pointer;
+}
+.refresh-btn:hover { background: #30363d; }
+.matchday-badge {
+  background: #1f2937; border-radius: 4px; padding: 2px 8px;
+  font-size: 0.7rem; color: #58a6ff; margin-left: 4px;
+}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="wc-label">FIFA World Cup</div>
-  <h1>2026 世界盃足球賽</h1>
-  <div class="sub">美國 · 加拿大 · 墨西哥 | 2026/06/11 – 07/19</div>
+  <div class="wc-label">FIFA World Cup 2026</div>
+  <h1>世界盃即時戰績</h1>
+  <div class="sub">USA / Canada / Mexico &nbsp;|&nbsp; Jun 11 – Jul 19, 2026</div>
   <div id="clock"></div>
+  <div id="api-note">資料來源：football-data.org API（即時更新）</div>
 </header>
 
-<nav class="tabs">
-  <div class="tab active" onclick="showTab('today')">今日賽事</div>
-  <div class="tab" onclick="showTab('groups')">分組積分</div>
-  <div class="tab" onclick="showTab('bracket')">淘汰賽</div>
-</nav>
-
-<!-- ══ TODAY ══ -->
-<div id="today" class="panel active">
-  <div class="match-date-label" id="today-label"></div>
-  <div id="matches-live"></div>
-  <div class="match-date-label" style="margin-top:20px">稍後賽事</div>
-  <div id="matches-upcoming"></div>
-  <div class="match-date-label" style="margin-top:20px">已結束</div>
-  <div id="matches-ft"></div>
-</div>
-
-<!-- ══ GROUPS ══ -->
-<div id="groups" class="panel">
-  <div class="group-grid" id="group-grid"></div>
-  <p style="font-size:0.72rem;color:#6e7681;margin-top:12px;padding:0 4px">
-    🟢 晉級 16 強 &nbsp;|&nbsp; 🟡 附加賽資格（第三名積分最佳）
-  </p>
-</div>
-
-<!-- ══ BRACKET ══ -->
-<div id="bracket" class="panel">
-  <div class="bracket-note">
-    <div class="big">🏆</div>
-    <div>淘汰賽於 2026/07/04 開始</div>
-    <div style="margin-top:6px;color:#8b949e">分組賽結束後將顯示完整對陣表</div>
+<div class="container">
+  <div class="api-key-form" id="keyForm">
+    <h3>🔑 輸入 API 金鑰</h3>
+    <p>
+      請前往 <a href="https://www.football-data.org/client/register" target="_blank" style="color:#58a6ff">football-data.org</a> 免費註冊取得 API Token，<br>
+      再貼入下方即可即時載入 2026 世界盃賽事資料。
+    </p>
+    <input type="text" id="apiKeyInput" placeholder="貼上您的 API Token" />
+    <button onclick="saveKeyAndLoad()">載入賽事</button>
   </div>
+  <div id="error-msg"></div>
+  <div id="loading">⏳ 載入賽事資料中...</div>
+  <button class="refresh-btn" id="refreshBtn" style="display:none" onclick="loadMatches()">🔄 重新整理</button>
+  <div id="matches-container"></div>
 </div>
-
-<div class="footer">資料每 60 秒自動更新 · 示範模擬數據 · 非官方</div>
 
 <script>
-// ── Data ──────────────────────────────────────────────────────────────────
-const LIVE = [
-  { a: ["🇧🇷","巴西"], b: ["🇨🇭","瑞士"],   sa: 2, sb: 0, min: "67'", venue: "MetLife / 紐約" },
-  { a: ["🇫🇷","法國"], b: ["🇦🇺","澳洲"],   sa: 1, sb: 1, min: "45+2'", venue: "SoFi / 洛杉磯" },
-];
-const UPCOMING = [
-  { a: ["🇩🇪","德國"],   b: ["🇲🇦","摩洛哥"], time: "22:00", venue: "AT&T / 達拉斯" },
-  { a: ["🇦🇷","阿根廷"], b: ["🇯🇵","日本"],   time: "01:00+1", venue: "Levi's / 舊金山" },
-];
-const FT = [
-  { a: ["🇪🇸","西班牙"], b: ["🇭🇷","克羅埃西亞"], sa: 3, sb: 0 },
-  { a: ["🏴󠁧󠁢󠁥󠁮󠁧󠁿","英格蘭"], b: ["🇸🇳","塞內加爾"],    sa: 2, sb: 1 },
-  { a: ["🇵🇹","葡萄牙"], b: ["🇺🇾","烏拉圭"],     sa: 1, sb: 0 },
-  { a: ["🇲🇽","墨西哥"], b: ["🇨🇦","加拿大"],     sa: 2, sb: 2 },
-];
-
-const GROUPS = [
-  { name: "A 組", teams: [
-    { f:"🇲🇽", n:"墨西哥",   p:2, w:1, d:1, l:0, gf:4, ga:2, pts:4 },
-    { f:"🇨🇦", n:"加拿大",   p:2, w:1, d:1, l:0, gf:3, ga:3, pts:4 },
-    { f:"🇯🇲", n:"牙買加",   p:2, w:0, d:1, l:1, gf:1, ga:2, pts:1 },
-    { f:"🇻🇪", n:"委內瑞拉", p:2, w:0, d:1, l:1, gf:1, ga:2, pts:1 },
-  ]},
-  { name: "B 組", teams: [
-    { f:"🇪🇸", n:"西班牙",   p:2, w:2, d:0, l:0, gf:5, ga:1, pts:6 },
-    { f:"🇭🇷", n:"克羅埃西亞",p:2, w:1, d:0, l:1, gf:2, ga:3, pts:3 },
-    { f:"🇹🇳", n:"突尼西亞", p:2, w:1, d:0, l:1, gf:2, ga:3, pts:3 },
-    { f:"🇺🇾", n:"烏拉圭",   p:2, w:0, d:0, l:2, gf:1, ga:3, pts:0 },
-  ]},
-  { name: "C 組", teams: [
-    { f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", n:"英格蘭",   p:2, w:2, d:0, l:0, gf:4, ga:1, pts:6 },
-    { f:"🇸🇳", n:"塞內加爾", p:2, w:1, d:0, l:1, gf:2, ga:2, pts:3 },
-    { f:"🇵🇱", n:"波蘭",     p:2, w:0, d:1, l:1, gf:1, ga:2, pts:1 },
-    { f:"🇪🇨", n:"厄瓜多",   p:2, w:0, d:1, l:1, gf:1, ga:3, pts:1 },
-  ]},
-  { name: "D 組", teams: [
-    { f:"🇧🇷", n:"巴西",     p:1, w:1, d:0, l:0, gf:2, ga:0, pts:3 },
-    { f:"🇨🇭", n:"瑞士",     p:1, w:0, d:0, l:1, gf:0, ga:2, pts:0 },
-    { f:"🇰🇷", n:"韓國",     p:1, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { f:"🇨🇲", n:"喀麥隆",   p:1, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-  ]},
-  { name: "E 組", teams: [
-    { f:"🇫🇷", n:"法國",     p:1, w:0, d:1, l:0, gf:1, ga:1, pts:1 },
-    { f:"🇦🇺", n:"澳洲",     p:1, w:0, d:1, l:0, gf:1, ga:1, pts:1 },
-    { f:"🇺🇸", n:"美國",     p:1, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { f:"🇸🇦", n:"沙烏地",   p:1, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-  ]},
-  { name: "F 組", teams: [
-    { f:"🇵🇹", n:"葡萄牙",   p:2, w:2, d:0, l:0, gf:4, ga:1, pts:6 },
-    { f:"🇩🇪", n:"德國",     p:1, w:0, d:0, l:0, gf:0, ga:0, pts:0 },
-    { f:"🇦🇷", n:"阿根廷",   p:1, w:1, d:0, l:0, gf:2, ga:1, pts:3 },
-    { f:"🇯🇵", n:"日本",     p:2, w:0, d:0, l:2, gf:1, ga:4, pts:0 },
-  ]},
-];
-
-// ── Render ────────────────────────────────────────────────────────────────
-function matchCard(m, type) {
-  const isLive     = type === "live";
-  const isUpcoming = type === "upcoming";
-  const statusHtml = isLive
-    ? `<div class="status live">&#9679; ${m.min}</div>`
-    : isUpcoming
-      ? `<div class="status upcoming">${m.time}</div>`
-      : `<div class="status ft">FT</div>`;
-  const scoreHtml = isUpcoming
-    ? `<div class="score-box"><span style="color:#444;font-size:1rem">vs</span></div>`
-    : `<div class="score-box">
-         <span class="score">${m.sa}</span>
-         <span class="score-sep">:</span>
-         <span class="score">${m.sb}</span>
-       </div>`;
-  const meta = m.venue ? `<div class="match-meta">${m.venue}</div>` : `<div class="match-meta"></div>`;
-
-  return `<div class="match-card ${isLive ? 'live' : ''}">
-    ${statusHtml}
-    <div class="teams">
-      <div class="team">
-        <span class="flag">${m.a[0]}</span>
-        <span class="name">${m.a[1]}</span>
-      </div>
-      ${scoreHtml}
-      <div class="team right">
-        <span class="flag">${m.b[0]}</span>
-        <span class="name">${m.b[1]}</span>
-      </div>
-    </div>
-    ${meta}
-  </div>`;
-}
-
-function renderMatches() {
-  document.getElementById("matches-live").innerHTML     = LIVE.map(m => matchCard(m, "live")).join("") || "<p style='color:#6e7681;font-size:0.85rem'>目前無進行中賽事</p>";
-  document.getElementById("matches-upcoming").innerHTML = UPCOMING.map(m => matchCard(m, "upcoming")).join("");
-  document.getElementById("matches-ft").innerHTML       = FT.map(m => matchCard(m, "ft")).join("");
-}
-
-function renderGroups() {
-  const html = GROUPS.map(g => {
-    const sorted = [...g.teams].sort((a,b) => b.pts - a.pts || (b.gf-b.ga) - (a.gf-a.ga));
-    const rows = sorted.map((t, i) => {
-      const cls = i < 2 ? "qualify" : i === 2 ? "playoff" : "";
-      return `<tr class="${cls}">
-        <td><span class="tf">${t.f}</span>${t.n}</td>
-        <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
-        <td>${t.gf}:${t.ga}</td>
-        <td><strong>${t.pts}</strong></td>
-      </tr>`;
-    }).join("");
-    return `<div class="group-block">
-      <div class="group-header">${g.name}</div>
-      <table>
-        <thead><tr>
-          <th>球隊</th><th>場</th><th>勝</th><th>平</th><th>負</th><th>球</th><th>積分</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-  }).join("");
-  document.getElementById("group-grid").innerHTML = html;
-}
-
-// ── Simulate live score tick ──────────────────────────────────────────────
-function tickLive() {
-  LIVE.forEach(m => {
-    const mins = parseInt(m.min);
-    if (!isNaN(mins) && mins < 90) {
-      m.min = (mins + 1) + "'";
-      if (Math.random() < 0.03) {
-        if (Math.random() < 0.5) m.sa++; else m.sb++;
-      }
-    }
-  });
-  renderMatches();
-}
-
-// ── Tab switch ────────────────────────────────────────────────────────────
-function showTab(id) {
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  event.target.classList.add("active");
-}
-
-// ── Clock ─────────────────────────────────────────────────────────────────
 function updateClock() {
   const now = new Date();
-  document.getElementById("clock").textContent =
-    now.toLocaleString("zh-TW", { timeZone: "Asia/Taipei", hour12: false });
+  document.getElementById('clock').textContent =
+    now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false });
 }
-
-// ── Init ──────────────────────────────────────────────────────────────────
-const today = new Date().toLocaleDateString("zh-TW", { year:"numeric", month:"long", day:"numeric", weekday:"short" });
-document.getElementById("today-label").textContent = "進行中 · " + today;
-
-renderMatches();
-renderGroups();
+setInterval(updateClock, 1000);
 updateClock();
 
-setInterval(tickLive,   60000);
-setInterval(updateClock, 1000);
+let API_KEY = localStorage.getItem('fdorg_api_key') || '';
+if (API_KEY) {
+  document.getElementById('keyForm').style.display = 'none';
+  loadMatches();
+}
+
+function saveKeyAndLoad() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) { alert('請輸入 API Token'); return; }
+  API_KEY = val;
+  localStorage.setItem('fdorg_api_key', val);
+  document.getElementById('keyForm').style.display = 'none';
+  loadMatches();
+}
+
+function resetKey() {
+  localStorage.removeItem('fdorg_api_key');
+  API_KEY = '';
+  document.getElementById('keyForm').style.display = 'block';
+  document.getElementById('error-msg').style.display = 'none';
+}
+
+function statusLabel(match) {
+  const s = match.status;
+  if (['LIVE','IN_PLAY','PAUSED'].includes(s)) {
+    const min = match.minute ? match.minute + "'" : 'LIVE';
+    return { text: min, cls: 'live-status', live: true };
+  }
+  if (s === 'FINISHED') return { text: 'FT', cls: '', live: false };
+  if (s === 'SCHEDULED' || s === 'TIMED') {
+    const d = new Date(match.utcDate);
+    const t = d.toLocaleTimeString('zh-TW', { timeZone: 'Asia/Taipei', hour: '2-digit', minute: '2-digit', hour12: false });
+    return { text: t, cls: 'upcoming', live: false };
+  }
+  return { text: s, cls: '', live: false };
+}
+
+function flagEmoji(code) {
+  if (!code || code.length !== 3) return '';
+  const map = {
+    ARG:'AR',BRA:'BR',FRA:'FR',GER:'DE',ENG:'GB',ESP:'ES',ITA:'IT',POR:'PT',
+    NED:'NL',BEL:'BE',CRO:'HR',URU:'UY',MEX:'MX',USA:'US',CAN:'CA',
+    JPN:'JP',KOR:'KR',AUS:'AU',MAR:'MA',SEN:'SN',GHA:'GH',CMR:'CM',
+    NGA:'NG',TUN:'TN',EGY:'EG',COL:'CO',PER:'PE',ECU:'EC',
+    SAU:'SA',IRN:'IR',QAT:'QA',POL:'PL',SUI:'CH',AUT:'AT',
+    CZE:'CZ',DEN:'DK',SWE:'SE',NOR:'NO',TUR:'TR',GRE:'GR',
+    UKR:'UA',SVN:'SI',CRC:'CR',HON:'HN',PAN:'PA',NZL:'NZ',
+    CHN:'CN',IND:'IN',THA:'TH',IDN:'ID',
+  };
+  const a2 = map[code];
+  if (!a2) return '';
+  const offset = 127397;
+  return String.fromCodePoint(...[...a2].map(c => c.charCodeAt(0) + offset));
+}
+
+async function loadMatches() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error-msg').style.display = 'none';
+  document.getElementById('matches-container').innerHTML = '';
+  document.getElementById('refreshBtn').style.display = 'none';
+  try {
+    const res = await fetch('https://api.football-data.org/v4/competitions/WC/matches?season=2026', {
+      headers: { 'X-Auth-Token': API_KEY }
+    });
+    if (res.status === 401) throw new Error('API Token 無效。<a href="#" onclick="resetKey();return false;">重新輸入</a>');
+    if (res.status === 403) throw new Error('此 API 方案不支援世界盃資料，請升級方案或確認設定。');
+    if (!res.ok) throw new Error('API 錯誤：' + res.status);
+    const data = await res.json();
+    const matches = data.matches || [];
+    if (matches.length === 0) throw new Error('目前無賽事資料。');
+    renderMatches(matches);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('refreshBtn').style.display = 'block';
+    setTimeout(loadMatches, 60000);
+  } catch (e) {
+    document.getElementById('loading').style.display = 'none';
+    const err = document.getElementById('error-msg');
+    err.style.display = 'block';
+    err.innerHTML = '⚠️ ' + e.message;
+    document.getElementById('refreshBtn').style.display = 'block';
+  }
+}
+
+function renderMatches(matches) {
+  const container = document.getElementById('matches-container');
+  container.innerHTML = '';
+  const today = new Date().toISOString().slice(0,10);
+  const live = matches.filter(m => ['LIVE','IN_PLAY','PAUSED'].includes(m.status));
+  const todayM = matches.filter(m => ['SCHEDULED','TIMED'].includes(m.status) && m.utcDate.slice(0,10) === today);
+  const upcoming = matches.filter(m => ['SCHEDULED','TIMED'].includes(m.status) && m.utcDate.slice(0,10) > today).slice(0, 20);
+  const finished = matches.filter(m => m.status === 'FINISHED').reverse().slice(0, 10);
+
+  if (live.length) { container.innerHTML += '<div class="section-title">🔴 進行中</div>'; live.forEach(m => container.appendChild(buildCard(m))); }
+  if (todayM.length) { container.innerHTML += '<div class="section-title">📅 今日賽事</div>'; todayM.forEach(m => container.appendChild(buildCard(m))); }
+  if (upcoming.length) { container.innerHTML += '<div class="section-title">🗓 即將到來</div>'; upcoming.forEach(m => container.appendChild(buildCard(m))); }
+  if (finished.length) { container.innerHTML += '<div class="section-title">✅ 最近結果</div>'; finished.forEach(m => container.appendChild(buildCard(m))); }
+}
+
+function buildCard(match) {
+  const sl = statusLabel(match);
+  const home = match.homeTeam;
+  const away = match.awayTeam;
+  const score = match.score;
+  const hScore = score?.fullTime?.home ?? '-';
+  const aScore = score?.fullTime?.away ?? '-';
+  const matchDate = new Date(match.utcDate).toLocaleDateString('zh-TW', { timeZone:'Asia/Taipei', month:'numeric', day:'numeric' });
+  const md = match.matchday ? '<span class="matchday-badge">第' + match.matchday + '輪</span>' : '';
+  const card = document.createElement('div');
+  card.className = 'match-card' + (sl.live ? ' live' : '');
+  card.innerHTML =
+    '<div class="status ' + sl.cls + '">' + sl.text + '<br><span style="font-size:0.65rem;color:#8b949e">' + matchDate + '</span></div>' +
+    '<div class="teams">' +
+      '<div class="team"><span class="name">' + flagEmoji(home.tla) + ' ' + (home.shortName || home.name) + '</span></div>' +
+      '<div class="score-box"><span>' + hScore + '</span><span class="score-sep">:</span><span>' + aScore + '</span></div>' +
+      '<div class="team right"><span class="name">' + (away.shortName || away.name) + ' ' + flagEmoji(away.tla) + '</span></div>' +
+    '</div>' +
+    '<div class="venue">' + (match.group || '') + md + '</div>';
+  return card;
+}
 </script>
 </body>
 </html>
