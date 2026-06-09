@@ -93,7 +93,7 @@ updateClock();
 
 // TheSportsDB League ID for FIFA World Cup 2026
 // League ID 4483 = FIFA World Cup, season 2025-2026
-const LEAGUE_ID = '4483';
+const LEAGUE_ID = '4429';
 const BASE = 'https://www.thesportsdb.com/api/v1/json/3';
 
 let autoRefreshTimer = null;
@@ -107,24 +107,25 @@ async function loadMatches() {
 
   try {
     // Fetch next 15 events
-    const [nextRes, lastRes] = await Promise.all([
-      fetch(BASE + '/eventsnextleague.php?id=' + LEAGUE_ID),
-      fetch(BASE + '/eventspastleague.php?id=' + LEAGUE_ID)
-    ]);
+    const res = await fetch(BASE + '/eventsseason.php?id=' + LEAGUE_ID + '&s=2026');
 
-    if (!nextRes.ok && !lastRes.ok) throw new Error('API 回應錯誤');
+    if (!res.ok) throw new Error('API 回應錯誤：' + res.status);
 
-    const nextData = await nextRes.json();
-    const lastData = await lastRes.json();
+    const data = await res.json();
+    const allMatches = data.events || [];
 
-    const upcoming = nextData.events || [];
-    const finished = (lastData.events || []).reverse().slice(0, 10);
-
-    if (upcoming.length === 0 && finished.length === 0) {
+    if (allMatches.length === 0) {
       throw new Error('目前沒有賽事資料，請稍後再試。');
     }
 
-    renderMatches(upcoming, finished);
+    // Sort by date
+    allMatches.sort((a, b) => new Date(a.dateEvent + 'T' + (a.strTime || '00:00:00')) - new Date(b.dateEvent + 'T' + (b.strTime || '00:00:00')));
+
+    const live = allMatches.filter(m => ['Live','1H','2H','HT','ET','PEN'].includes(m.strStatus));
+    const upcoming = allMatches.filter(m => m.strStatus === 'NS');
+    const finished = allMatches.filter(m => m.strStatus === 'FT' || m.strStatus === 'AET' || m.strStatus === 'PEN').reverse().slice(0, 15);
+
+    renderMatchesByType(live, upcoming, finished);
     document.getElementById('loading').style.display = 'none';
     document.getElementById('refreshBtn').style.display = 'block';
     document.getElementById('last-updated').textContent =
@@ -141,24 +142,20 @@ async function loadMatches() {
   }
 }
 
-function renderMatches(upcoming, finished) {
+function renderMatchesByType(live, upcoming, finished) {
   const container = document.getElementById('matches-container');
   container.innerHTML = '';
-
-  // Check for live matches among upcoming (strStatus = 'Live' or has score)
-  const live = upcoming.filter(m => m.strStatus === 'Live' || m.strStatus === '1H' || m.strStatus === '2H' || m.strStatus === 'HT');
-  const scheduled = upcoming.filter(m => !live.includes(m));
 
   if (live.length > 0) {
     container.innerHTML += '<div class="section-title">🔴 進行中</div>';
     live.forEach(m => container.appendChild(buildCard(m, 'live')));
   }
-  if (scheduled.length > 0) {
-    container.innerHTML += '<div class="section-title">🗓 即將到來</div>';
-    scheduled.forEach(m => container.appendChild(buildCard(m, 'upcoming')));
+  if (upcoming.length > 0) {
+    container.innerHTML += '<div class="section-title">🗓 賽程表（共' + upcoming.length + '場）</div>';
+    upcoming.slice(0, 20).forEach(m => container.appendChild(buildCard(m, 'upcoming')));
   }
   if (finished.length > 0) {
-    container.innerHTML += '<div class="section-title">✅ 最近結果</div>';
+    container.innerHTML += '<div class="section-title">✅ 最近結果（最新15場）</div>';
     finished.forEach(m => container.appendChild(buildCard(m, 'finished')));
   }
 }
